@@ -1,0 +1,58 @@
+echo start faults register print\n
+echo \nhard fault\n
+echo -- \ 
+x 0xE000ED2C
+printf "  |- %d debug event\n",  ( *0xE000ED2C & 0x80000000 ) != 0
+printf "  |- %d force event\n",  ( *0xE000ED2C & 0x40000000 ) != 0
+printf "  |- %d vector table\n", ( *0xE000ED2C & 0x00000002 ) != 0
+echo \nsecure fault\n
+echo -- \ 
+x 0xE000EDE4
+printf "  |- %d lazy state\n",                    ( *0xE000EDE4 & 0x00000080 ) != 0
+printf "  |- %d secure fault address valid\n",    ( *0xE000EDE4 & 0x00000040 ) != 0
+printf "  |- %d lazy state preservation error\n", ( *0xE000EDE4 & 0x00000020 ) != 0
+printf "  |- %d invalid transation\n",            ( *0xE000EDE4 & 0x00000010 ) != 0
+printf "  |- %d attribution unit violation\n",    ( *0xE000EDE4 & 0x00000008 ) != 0
+printf "  |- %d invalid exception return\n",      ( *0xE000EDE4 & 0x00000004 ) != 0
+printf "  |- %d invalid integrity signature\n",   ( *0xE000EDE4 & 0x00000002 ) != 0
+printf "  |- %d invalid entry point\n",           ( *0xE000EDE4 & 0x00000001 ) != 0
+echo \ndebug fault\n
+echo -- \ 
+x 0xE000ED30
+printf "  |- %d pmu event\n",          ( *0xE000ED30 & 0x00000020 ) != 0
+printf "  |- %d external event\n",     ( *0xE000ED30 & 0x00000010 ) != 0
+printf "  |- %d vector catch event\n", ( *0xE000ED30 & 0x00000008 ) != 0
+printf "  |- %d watchpoint event\n",   ( *0xE000ED30 & 0x00000004 ) != 0
+printf "  |- %d breakpoint event\n",   ( *0xE000ED30 & 0x00000002 ) != 0
+printf "  |- %d halt/step event\n",    ( *0xE000ED30 & 0x00000001 ) != 0
+echo \nconfigurable fault\n
+echo -- \ 
+x 0xE000ED28
+printf "  |- usage fault\n"
+printf "   |- %d divide by zero\n",       ( *0xE000ED28 & 0x02000000 ) != 0
+printf "   |- %d unaligned access\n",     ( *0xE000ED28 & 0x01000000 ) != 0
+printf "   |- %d stack overflow\n",       ( *0xE000ED28 & 0x00100000 ) != 0
+printf "   |- %d no coprocessor\n",       ( *0xE000ED28 & 0x00080000 ) != 0
+printf "   |- %d invalid PC\n",           ( *0xE000ED28 & 0x00040000 ) != 0
+printf "   |- %d invalid state\n",        ( *0xE000ED28 & 0x00020000 ) != 0
+printf "   |- %d undefined instuction\n", ( *0xE000ED28 & 0x00010000 ) != 0
+printf "  |- bus fault\n"
+printf "   |- %d BFAR valid\n",                    ( *0xE000ED28 & 0x00008000 ) != 0
+printf "   |- %d lazy state preservation error\n", ( *0xE000ED28 & 0x00002000 ) != 0
+printf "   |- %d stack error\n",                   ( *0xE000ED28 & 0x00001000 ) != 0
+printf "   |- %d unstack error\n",                 ( *0xE000ED28 & 0x00000800 ) != 0
+printf "   |- %d imprecise error\n",               ( *0xE000ED28 & 0x00000400 ) != 0
+printf "   |- %d precise error\n",                 ( *0xE000ED28 & 0x00000200 ) != 0
+printf "   |- %d instruction bus error\n",         ( *0xE000ED28 & 0x00000100 ) != 0
+printf "  |- memory management fault\n"
+printf "   |- %d MMFAR valid\n",                   ( *0xE000ED28 & 0x00000080 ) != 0
+printf "   |- %d lazy state preservation error\n", ( *0xE000ED28 & 0x00000020 ) != 0
+printf "   |- %d stacking error\n",                ( *0xE000ED28 & 0x00000010 ) != 0
+printf "   |- %d unstacking error\n",              ( *0xE000ED28 & 0x00000008 ) != 0
+printf "   |- %d data access violation\n",         ( *0xE000ED28 & 0x00000002 ) != 0
+printf "   |- %d instruction access violation\n",  ( *0xE000ED28 & 0x00000001 ) != 0
+echo \nauxiliary fault\n
+x 0xE000ED3C
+echo \nras fault\n
+x 0xE000EF04
+echo \nend faults register print\n

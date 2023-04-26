@@ -1,0 +1,200 @@
+echo \nexception mask register\n
+printf "-- 0x%x primask\n", $primask
+printf "  |-- %d boots execution priority to 0 or 0x80\n", ( $primask & 0x00000001 )
+printf "-- 0x%x basepri\n", $basepri
+printf "  |-- %d disabled masking\n", ( $basepri & 0x000000FF ) == 0
+printf "  |-- %d priority value\n",   ( $basepri & 0x000000FF )
+printf "-- 0x%x faultmask\n", $faultmask
+printf "  |-- %d enabled\n", ( $faultmask & 0x00000001 )
+
+echo \ninterrupt control and state register\n
+echo -- \ 
+x 0xE000ED04
+printf "  |- %d pend NMI set\n",                   ( *0xE000ED04 & 0x80000000 ) != 0
+printf "  |- %d pend NMI clear\n",                 ( *0xE000ED04 & 0x40000000 ) != 0
+printf "  |- %d pend pendSV set\n",                ( *0xE000ED04 & 0x10000000 ) != 0
+printf "  |- %d pend pendSV clear\n",              ( *0xE000ED04 & 0x08000000 ) != 0
+printf "  |- %d pend sys tick set\n",              ( *0xE000ED04 & 0x04000000 ) != 0
+printf "  |- %d pend sys tick clear\n",            ( *0xE000ED04 & 0x02000000 ) != 0
+printf "  |- %d sys tick non-secure\n",            ( *0xE000ED04 & 0x01000000 ) != 0
+printf "  |- %d interrupt preempt\n",              ( *0xE000ED04 & 0x00800000 ) != 0
+printf "  |- %d interrupt pending\n",              ( *0xE000ED04 & 0x00400000 ) != 0
+printf "  |- %d(0x%x) pending exception number\n", ( *0xE000ED04 & 0x001FF000 ) >> 12, ( *0xE000ED04 & 0x001FF000 ) >> 12
+printf "  |- %d more than one active exception\n", ( *0xE000ED04 & 0x00000800 ) != 0
+printf "  |- %d(0x%x) current exception nubmer\n", ( *0xE000ED04 & 0x800001FF ), ( *0xE000ED04 & 0x800001FF )
+printf "  |- %d thread mode\n",                    ( *0xE000ED04 & 0x000001FF ) == 0
+
+echo \nsystem handler control and state register\n
+echo -- \ 
+x 0xE000ED24
+printf "  |- %d hard fault pended\n",    ( *0xE000ED24 & 0x00200000 ) != 0
+printf "  |- %d secure fault pended\n",  ( *0xE000ED24 & 0x00100000 ) != 0
+printf "  |- %d secure fault enabled\n", ( *0xE000ED24 & 0x00080000 ) != 0
+printf "  |- %d usage fault enabled\n",  ( *0xE000ED24 & 0x00040000 ) != 0
+printf "  |- %d bus fault enabled\n",    ( *0xE000ED24 & 0x00020000 ) != 0
+printf "  |- %d mem fault enabled\n",    ( *0xE000ED24 & 0x00010000 ) != 0
+printf "  |- %d svc pended\n",           ( *0xE000ED24 & 0x00008000 ) != 0
+printf "  |- %d bus fault pended\n",     ( *0xE000ED24 & 0x00004000 ) != 0
+printf "  |- %d mem fault pended\n",     ( *0xE000ED24 & 0x00002000 ) != 0
+printf "  |- %d usage fault pended\n",   ( *0xE000ED24 & 0x00001000 ) != 0
+printf "  |- %d sys tick active\n",      ( *0xE000ED24 & 0x00000800 ) != 0
+printf "  |- %d pend sv active\n",       ( *0xE000ED24 & 0x00000400 ) != 0
+printf "  |- %d debug monitor active\n", ( *0xE000ED24 & 0x00000100 ) != 0
+printf "  |- %d svc active\n",           ( *0xE000ED24 & 0x00000080 ) != 0
+printf "  |- %d nmi active\n",           ( *0xE000ED24 & 0x00000020 ) != 0
+printf "  |- %d secure fault active\n",  ( *0xE000ED24 & 0x00000010 ) != 0
+printf "  |- %d usage fault active\n",   ( *0xE000ED24 & 0x00000008 ) != 0
+printf "  |- %d hard fault active\n",    ( *0xE000ED24 & 0x00000004 ) != 0
+printf "  |- %d bus fault active\n",     ( *0xE000ED24 & 0x00000002 ) != 0
+printf "  |- %d mem fault active\n",     ( *0xE000ED24 & 0x00000001 ) != 0
+
+echo \ndebug exception and monitor control register\n
+echo -- \ 
+x 0xE000EDFC
+printf "  |- %d dwt pmu itm enabled\n",                                      ( *0xE000EDFC & 0x01000000 ) != 0
+printf "  |- %d monitor pend req key\n",                                     ( *0xE000EDFC & 0x00800000 ) != 0
+printf "  |- %d unprivileged monitor enabled\n",                             ( *0xE000EDFC & 0x00200000 ) != 0
+printf "  |- %d secure debug monitor enabled\n",                             ( *0xE000EDFC & 0x00100000 ) != 0
+printf "  |- %d monitor request\n",                                          ( *0xE000EDFC & 0x00080000 ) != 0
+printf "  |- %d monitor stepping enabled\n",                                 ( *0xE000EDFC & 0x00040000 ) != 0
+printf "  |- %d monitor pending\n",                                          ( *0xE000EDFC & 0x00020000 ) != 0
+printf "  |- %d debug monitor exception enabled\n",                          ( *0xE000EDFC & 0x00010000 ) != 0
+printf "  |- %d halting on secure fault enabled\n",                          ( *0xE000EDFC & 0x00000800 ) != 0
+printf "  |- %d halting on hard fault enabled\n",                            ( *0xE000EDFC & 0x00000400 ) != 0
+printf "  |- %d halting on faults enabled\n",                                ( *0xE000EDFC & 0x00000200 ) != 0
+printf "  |- %d halting on bus fault enabled\n",                             ( *0xE000EDFC & 0x00000100 ) != 0
+printf "  |- %d halting on usage fault(state info error) enabled\n",         ( *0xE000EDFC & 0x00000080 ) != 0
+printf "  |- %d halting on usage fault(checking error) enabled\n",           ( *0xE000EDFC & 0x00000040 ) != 0
+printf "  |- %d halting on usage fault(coprocessor access error) enabled\n", ( *0xE000EDFC & 0x00000020 ) != 0
+printf "  |- %d halting on mem fault enabled\n",                             ( *0xE000EDFC & 0x00000010 ) != 0
+printf "  |- %d halting on reset enabled\n",                                 ( *0xE000EDFC & 0x00000001 ) != 0
+
+echo \napplication interrupt and reset control register\n
+echo -- \ 
+x 0xE000ED0C
+printf "  |- %d(0x%x) key\n",                                              ( *0xE000ED0C & 0xFFFF0000 ) >> 16, ( *0xE000ED0C & 0xFFFF0000 ) >> 16
+printf "  |- %d little-endian\n",                                          ( *0xE000ED0C & 0x00008000 ) == 0
+printf "  |- %d big-endian\n",                                             ( *0xE000ED0C & 0x00008000 ) != 0
+printf "  |- %d priority range of secure and non-secure are indentical\n", ( *0xE000ED0C & 0x00004000 ) == 0
+printf "  |- %d non-secure exceptions are de-priorituzed\n",               ( *0xE000ED0C & 0x00004000 ) != 0
+printf "  |- %d busfault hardfault and NMI are secure\n",                  ( *0xE000ED0C & 0x00002000 ) != 0
+printf "  |- 0x%x priority group\n",                                       ( *0xE000ED0C & 0x00000700 ) >> 8
+printf "  |- %d implicit error synchronization barries enabled\n",         ( *0xE000ED0C & 0x00000020 ) != 0
+printf "  |- %d data independent timing\n",                                ( *0xE000ED0C & 0x00000010 ) != 0
+printf "  |- %d system reset request only available to secure state\n",    ( *0xE000ED0C & 0x00000008 ) != 0
+printf "  |- %d system reset request\n",                                   ( *0xE000ED0C & 0x00000004 ) != 0
+printf "  |- %d clear active state\n",                                     ( *0xE000ED0C & 0x00000002 ) != 0
+
+echo \ninterrupt controller type register\n
+echo -- \ 
+x 0xE000E004
+printf "  |- %d interrupt line set number\n",      ( *0xE000E004 & 0x0000000F)
+printf "  |- %d supported number of interrupts\n", ( ( *0xE000E004 & 0x0000000F) + 1 ) * 32
+
+echo \ninterrupt active bit register\n
+set $int_register_index = 0
+while ($int_register_index < 16)
+  set $int_priority_group = *( 0xE000E300 + 4 * $int_register_index )
+  set $int_index = 0
+  while ($int_index < 32)
+    set $int_num = 32 * $int_register_index + $int_index
+    set $int_active = ( $int_priority_group & ( 0x1 << $int_index ) ) >> ( $int_index )
+    if ($int_active)
+      printf "%2d int#%3d(0x%-3x)\n", $int_active, $int_num, $int_num
+    end
+
+    set $int_index = $int_index + 1
+  end
+
+  set $int_register_index = $int_register_index + 1
+end
+
+echo \ninterrupt set pending bit register\n
+set $int_register_index = 0
+while ($int_register_index < 16)
+  set $int_priority_group = *( 0xE000E200 + 4 * $int_register_index )
+  set $int_index = 0
+  while ($int_index < 32)
+    set $int_num = 32 * $int_register_index + $int_index
+    set $int_pending = ( $int_priority_group & ( 0x1 << $int_index ) ) >> ( $int_index )
+    if ($int_pending)
+      printf "%2d int#%3d(0x%-3x)\n", $int_pending, $int_num, $int_num
+    end
+
+    set $int_index = $int_index + 1
+  end
+
+  set $int_register_index = $int_register_index + 1
+end
+
+echo \ninterrupt set enable register\n
+set $int_register_index = 0
+while ($int_register_index < 16)
+  set $int_priority_group = *( 0xE000E100 + 4 * $int_register_index )
+  set $int_index = 0
+  while ($int_index < 32)
+    set $int_num = 32 * $int_register_index + $int_index
+    set $int_enable = ( $int_priority_group & ( 0x1 << $int_index ) ) >> ( $int_index )
+    if ($int_enable)
+      printf "%2d int#%3d(0x%-3x)\n", $int_enable, $int_num, $int_num
+    end
+
+    set $int_index = $int_index + 1
+  end
+
+  set $int_register_index = $int_register_index + 1
+end
+
+echo \ninterrupt target non-secure register\n
+set $int_register_index = 0
+while ($int_register_index < 16)
+  set $int_priority_group = *( 0xE000E380 + 4 * $int_register_index )
+  set $int_index = 0
+  while ($int_index < 32)
+    set $int_num = 32 * $int_register_index + $int_index
+    set $int_non_secure = ( $int_priority_group & ( 0x1 << $int_index ) )
+    if ($int_non_secure)
+      printf "int#%3d(0x%-3x)\n", $int_num, $int_num
+    end
+
+    set $int_index = $int_index + 1
+  end
+
+  set $int_register_index = $int_register_index + 1
+end
+
+echo \ninterrupt clear pending register\n
+set $int_register_index = 0
+while ($int_register_index < 16)
+  set $int_priority_group = *( 0xE000E280 + 4 * $int_register_index )
+  set $int_index = 0
+  while ($int_index < 32)
+    set $int_num = 32 * $int_register_index + $int_index
+    set $int_pending = ( $int_priority_group & ( 0x1 << $int_index ) ) >> ( $int_index )
+    if ($int_pending)
+      printf "%2d int#%3d(0x%-3x)\n", $int_pending, $int_num, $int_num
+    end
+
+    set $int_index = $int_index + 1
+  end
+
+  set $int_register_index = $int_register_index + 1
+end
+
+echo \ninterrupt clear enable register\n
+set $int_register_index = 0
+while ($int_register_index < 16)
+  set $int_priority_group = *( 0xE000E180 + 4 * $int_register_index )
+  set $int_index = 0
+  while ($int_index < 32)
+    set $int_num = 32 * $int_register_index + $int_index
+    set $int_clear_enable = ( $int_priority_group & ( 0x1 << $int_index ) ) >> ( $int_index )
+    if ($int_clear_enable)
+      printf "%2d int#%3d(0x%-3x)\n", $int_clear_enable, $int_num, $int_num
+    end
+
+    set $int_index = $int_index + 1
+  end
+
+  set $int_register_index = $int_register_index + 1
+end

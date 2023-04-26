@@ -1,0 +1,23 @@
+echo start xpsr register print\n
+printf "-- 0x%x xpsr\n", $xpsr
+printf "  |- apsr\n"
+printf "    |- %d negative\n",        ( $xpsr & 0x80000000 ) != 0
+printf "    |- %d zero\n",            ( $xpsr & 0x40000000 ) != 0
+printf "    |- %d carry\n",           ( $xpsr & 0x20000000 ) != 0
+printf "    |- %d signed overflow\n", ( $xpsr & 0x10000000 ) != 0
+printf "    |- %d saturation\n",      ( $xpsr & 0x08000000 ) != 0
+printf "    |- 0x%x ge\n",            ( $xpsr & 0x000F0000 ) >> 16
+printf "  |- epsr\n"
+printf "    |- %d t32\n",                                 ( $xpsr & 0x01000000 ) != 0
+printf "    |- %d branch target identification active\n", ( $xpsr & 0x00200000 ) != 0
+set $it_flag = ( $xpsr & 0x06000C00 ) != 0
+if($it_flag)
+  printf "    |- 0x%x if-then\n", ( ( $xpsr & 0x0000FC00 ) >> 8 ) | ( ( $xpsr & 0x06000000 ) >> 25 )
+else
+  printf "    |- 0x%x ici(interrupt continuation)\n", ( ( $xpsr & 0x0000FC00 ) >> 10 ) | ( ( $xpsr & 0x06000000 ) >> 15 )
+  printf "    |- 0x%x eci(exception continuation)\n", ( ( $xpsr & 0x00000C00 ) >> 6 )  | ( ( $xpsr & 0x06000000 ) >> 15 ) | ( ( $xpsr & 0x0000F000 ) >> 12 )
+end
+printf "  |- ipsr\n"
+printf "    |- %d thread mode\n",            ( $xpsr & 0x0000001F ) == 0
+printf "    |- 0x%x(%d) exception number\n", ( $xpsr & 0x0000001F ), ( $xpsr & 0x0000001F )
+echo \nend xpsr register print\n

@@ -1,0 +1,65 @@
+echo start mpu register print\n
+echo \nMPU Control Register\n
+echo -- \ 
+x 0xE002ED94
+printf "  |- %d privileged default enable\n", ( *0xE002ED94 & 0x00000004 ) != 0
+printf "  |- %d hardfault nmi enable\n",      ( *0xE002ED94 & 0x00000002 ) != 0
+printf "  |- %d enable\n",                    ( *0xE002ED94 & 0x00000001 ) != 0
+echo \nMPU Type Register\n
+echo -- \ 
+x 0xE002ED90
+printf "  |- %d regions\n", ( *0xE002ED90 & 0x0000FF00 ) >> 8
+echo \nMPU Memory Attribute Indirection Register 0\n
+x 0xE002EDC0
+echo MPU Memory Attribute Indirection Register 1\n
+x 0xE002EDC4
+printf "  |- 7    | 6    | 5    | 4    | 3    | 2    | 1    | 0    |\n"
+printf "  |- 0x%02x | 0x%02x | 0x%02x | 0x%02x | 0x%02x | 0x%02x | 0x%02x | 0x%02x |\n" \
+, ( *0xE002EDC4 & 0xFF000000 ) >> 24 \
+, ( *0xE002EDC4 & 0x00FF0000 ) >> 16 \
+, ( *0xE002EDC4 & 0x0000FF00 ) >> 8 \
+, ( *0xE002EDC4 & 0x000000FF ) \
+, ( *0xE002EDC0 & 0xFF000000 ) >> 24 \
+, ( *0xE002EDC0 & 0x00FF0000 ) >> 16 \
+, ( *0xE002EDC0 & 0x0000FF00 ) >> 8 \
+, ( *0xE002EDC0 & 0x000000FF )
+
+echo \nMPU Memory Region Base Address Register\n
+printf "--|- region | address     | not shareable | outer shareable | inner shareable | R/W privileged only | R/W any privilege | Read only privileged only | Read only any privilege | execute not permitted |\n"
+set $region_index = 0
+set $region_number = ( *0xE002ED90 & 0x0000FF00 ) >> 8
+while ($region_index < $region_number)
+  set *0xE002ED98 = $region_index
+  printf "  |- %2d     | 0x%08x  | %-13d | %-15d | %-15d | %-19d | %-17d | %-25d | %-23d | %-21d |\n" \
+  , $region_index \
+  , ( *0xE002ED9C & 0xFFFFFFE0 ) \
+  , ( *0xE002ED9C & 0x00000018 ) == 0x00000000 \
+  , ( *0xE002ED9C & 0x00000018 ) == 0x00000010 \
+  , ( *0xE002ED9C & 0x00000018 ) == 0x00000018 \
+  , ( *0xE002ED9C & 0x00000006 ) == 0x00000000 \
+  , ( *0xE002ED9C & 0x00000006 ) == 0x00000002 \
+  , ( *0xE002ED9C & 0x00000006 ) == 0x00000004 \
+  , ( *0xE002ED9C & 0x00000006 ) == 0x00000006 \
+  , ( *0xE002ED9C & 0x00000001 )
+
+  set $region_index = $region_index + 1
+end
+
+echo \nMPU Memory Region Limit Address Register\n
+printf "--|- region | limit address | execution only permitted if read permitted | execution from a privileged mode is not permitted | attr index | region enabled |\n"
+set $region_index = 0
+set $region_number = ( *0xE002ED90 & 0x0000FF00 ) >> 8
+while ($region_index < $region_number)
+  set *0xE002ED98 = $region_index
+  printf "  |- %2d     | 0x%08x    | %-42d | %-49d | %-10d | %-14d |\n" \
+  , $region_index \
+  , ( *0xE002EDA0 & 0xFFFFFFE0 | 0x1F ) \
+  , ( *0xE002EDA0 & 0x00000010 ) == 0 \
+  , ( *0xE002EDA0 & 0x00000010 ) != 0 \
+  , ( *0xE002EDA0 & 0x0000000E ) >> 1 \
+  , ( *0xE002EDA0 & 0x00000001 ) != 0
+
+  set $region_index = $region_index + 1
+end
+
+echo \nend mpu register print\n

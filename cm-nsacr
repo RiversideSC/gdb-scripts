@@ -1,0 +1,14 @@
+echo start non secure access control register print\n
+echo -- \ 
+x 0xE000ED8C
+printf "  |- %d cp11 enable non-secure access to FPU\n", ( *0xE000ED8C & 0x00000800 ) != 0
+printf "  |- %d cp10 enable non-secure access to FPU\n", ( *0xE000ED8C & 0x00000400 ) != 0
+printf "  |- %d cp7\n",  ( *0xE000ED8C & 0x00000080 ) != 0
+printf "  |- %d cp6\n",  ( *0xE000ED8C & 0x00000040 ) != 0
+printf "  |- %d cp5\n",  ( *0xE000ED8C & 0x00000020 ) != 0
+printf "  |- %d cp4\n",  ( *0xE000ED8C & 0x00000010 ) != 0
+printf "  |- %d cp3\n",  ( *0xE000ED8C & 0x00000008 ) != 0
+printf "  |- %d cp2\n",  ( *0xE000ED8C & 0x00000004 ) != 0
+printf "  |- %d cp1\n",  ( *0xE000ED8C & 0x00000002 ) != 0
+printf "  |- %d cp0\n",  ( *0xE000ED8C & 0x00000001 ) != 0
+echo \nend faults register print\n

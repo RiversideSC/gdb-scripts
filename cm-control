@@ -1,0 +1,13 @@
+echo start control register print\n
+printf "-- 0x%x control\n", $control
+printf "  |- %d pointer authentication is enabled for unprivileged access\n",           ( $control & 0x00000080 ) != 0
+printf "  |- %d pointer authentication is enabled for privileged access\n",             ( $control & 0x00000040 ) != 0
+printf "  |- %d branch target identification enabled for unprivileged access\n",        ( $control & 0x00000020 ) != 0
+printf "  |- %d branch target identification enabled for privileged access\n",          ( $control & 0x00000010 ) != 0
+printf "  |- %d floating point registers contain state that belongs to secure state\n", ( $control & 0x00000008 ) != 0
+printf "  |- %d floating point extension is active\n",                                  ( $control & 0x00000004 ) != 0
+printf "  |- %d using msp\n",                                                           ( $control & 0x00000002 ) == 0
+printf "  |- %d using psp\n",                                                           ( $control & 0x00000002 ) != 0
+printf "  |- %d thread mode has privileged access\n",                                   ( $control & 0x00000001 ) == 0
+printf "  |- %d thread mode has unprivileged access only\n",                            ( $control & 0x00000001 ) != 0
+echo \nend control register print\n

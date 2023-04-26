@@ -1,0 +1,41 @@
+echo start stack frame print\n
+echo checking LR\n
+printf " 0x%x prefix\n", ( $lr & 0xFF000000 ) >> 24
+set $is_exception = ( 0xFF000000 == ( 0xFF000000 & $lr ) )
+if($is_exception)
+  printf " %d secure stack used\n",                ( $lr & 0x00000040 ) != 0
+  printf " %d default callee register stacking\n", ( $lr & 0x00000020 ) != 0
+  printf " %d standard stack frame\n",             ( $lr & 0x00000010 ) != 0
+  printf " %d extended stack frame\n",             ( $lr & 0x00000010 ) == 0
+  printf " %d thread mode\n",                      ( $lr & 0x00000008 ) != 0
+  printf " %d handler mode\n",                     ( $lr & 0x00000008 ) == 0
+  printf " %d psp\n",                              ( $lr & 0x00000004 ) != 0
+  printf " %d msp\n",                              ( $lr & 0x00000004 ) == 0
+  printf " %d exception secure\n",                 ( $lr & 0x00000001 ) != 0
+  echo checking sp\n
+  set $is_msp = ( 0 == ( $lr & ( 1 << 2 ) ) )
+  if($is_msp)
+    printf " using msp\n"
+    printf " r0   = 0x%x\n", *( (uint32_t *)$msp + 0)
+    printf " r1   = 0x%x\n", *( (uint32_t *)$msp + 1)
+    printf " r2   = 0x%x\n", *( (uint32_t *)$msp + 2)
+    printf " r3   = 0x%x\n", *( (uint32_t *)$msp + 3)
+    printf " r12  = 0x%x\n", *( (uint32_t *)$msp + 4)
+    printf " LR   = 0x%x\n", *( (uint32_t *)$msp + 5)
+    printf " PC   = 0x%x\n", *( (uint32_t *)$msp + 6)
+    printf " xPSR = 0x%x\n", *( (uint32_t *)$msp + 7)
+  else
+    printf " using psp\n"
+    printf " r0   = 0x%x\n", *( (uint32_t *)$psp + 0)
+    printf " r1   = 0x%x\n", *( (uint32_t *)$psp + 1)
+    printf " r2   = 0x%x\n", *( (uint32_t *)$psp + 2)
+    printf " r3   = 0x%x\n", *( (uint32_t *)$psp + 3)
+    printf " r12  = 0x%x\n", *( (uint32_t *)$psp + 4)
+    printf " LR   = 0x%x\n", *( (uint32_t *)$psp + 5)
+    printf " PC   = 0x%x\n", *( (uint32_t *)$psp + 6)
+    printf " xPSR = 0x%x\n", *( (uint32_t *)$psp + 7)
+  end
+else
+ echo not in exception\n
+end
+echo end stack frame print\n

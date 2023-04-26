@@ -1,0 +1,41 @@
+echo start sau register print\n
+echo \nSAU Control Register\n
+echo -- \ 
+x 0xE000EDD0
+printf "  |- %d memory secure and NOT non-secure callable\n", ( *0xE000EDD0 & 0x00000002 ) == 0
+printf "  |- %d memory non-secure\n",                         ( *0xE000EDD0 & 0x00000002 ) != 0
+printf "  |- %d enable\n",                                    ( *0xE000EDD0 & 0x00000001 ) != 0
+echo \nSAU Type Register\n
+echo -- \ 
+x 0xE000EDD4
+printf "  |- %d regions\n", ( *0xE000EDD4 & 0x000000FF )
+
+echo \nSAU Region Base Address Register\n
+printf "--|- region | address    |\n"
+set $region_index = 0
+set $region_number = ( *0xE000EDD4 & 0x000000FF )
+while ($region_index < $region_number)
+  set *0xE000EDD8 = $region_index
+  printf "  |- %2d     | 0x%08x |\n" \
+  , $region_index \
+  , ( *0xE000EDDC & 0xFFFFFFE0 )
+
+  set $region_index = $region_index + 1
+end
+
+echo \nSAU Region Limit Address Register\n
+printf "--|- region | limit address | non-secure callable | region enabled |\n"
+set $region_index = 0
+set $region_number = ( *0xE000EDD4 & 0x000000FF )
+while ($region_index < $region_number)
+  set *0xE000EDD8 = $region_index
+  printf "  |- %2d     | 0x%08x    | %-19d | %-14d |\n" \
+  , $region_index \
+  , ( *0xE000EDE0 & 0xFFFFFFE0 | 0x1F ) \
+  , ( *0xE000EDE0 & 0x00000002 ) != 0 \
+  , ( *0xE000EDE0 & 0x00000001 ) != 0
+
+  set $region_index = $region_index + 1
+end
+
+echo \nend sau register print\n
