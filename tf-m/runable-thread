@@ -1,7 +1,9 @@
 set $i = p_rnbl_head
 while($i != 0)
+  p/xa $i
   p/xa *$i
   set $i = $i.next
 end
 echo \ncurrent thread\n
+p/xa p_curr_thrd
 p/xa *p_curr_thrd
