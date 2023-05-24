@@ -1,0 +1,6 @@
+echo current thread's partition info\n
+p/xa *(struct partition_t *)((unsigned long)(p_curr_thrd->p_context_ctrl) - 28)
+echo \ncurrent thread's context info\n
+p/xa *(struct context_ctrl_t*)p_curr_thrd->p_context_ctrl
+echo \ncurrent thread's info\n
+p/xa *p_curr_thrd

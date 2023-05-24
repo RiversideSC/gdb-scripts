@@ -1,0 +1,7 @@
+set $i = p_thrd_head
+while($i != 0)
+  p/xa *$i
+  set $i = $i.next
+end
+echo \ncurrent thread\n
+p/xa *p_curr_thrd
