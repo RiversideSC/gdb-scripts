@@ -14,26 +14,51 @@ if($is_exception)
   printf " %d exception secure\n",                 ( $lr & 0x00000001 ) != 0
   echo checking sp\n
   set $is_msp = ( 0 == ( $lr & ( 1 << 2 ) ) )
+  set $is_secure_stack = ( 0 != ( $lr & 0x00000040 ) )
   if($is_msp)
-    printf " using msp\n"
-    printf " r0   = 0x%x\n", *( (uint32_t *)$msp + 0)
-    printf " r1   = 0x%x\n", *( (uint32_t *)$msp + 1)
-    printf " r2   = 0x%x\n", *( (uint32_t *)$msp + 2)
-    printf " r3   = 0x%x\n", *( (uint32_t *)$msp + 3)
-    printf " r12  = 0x%x\n", *( (uint32_t *)$msp + 4)
-    printf " LR   = 0x%x\n", *( (uint32_t *)$msp + 5)
-    printf " PC   = 0x%x\n", *( (uint32_t *)$msp + 6)
-    printf " xPSR = 0x%x\n", *( (uint32_t *)$msp + 7)
+    if($is_secure_stack)
+      printf " using msp_s\n"
+      printf " r0   = 0x%x\n", *( (uint32_t *)$msp_s + 0)
+      printf " r1   = 0x%x\n", *( (uint32_t *)$msp_s + 1)
+      printf " r2   = 0x%x\n", *( (uint32_t *)$msp_s + 2)
+      printf " r3   = 0x%x\n", *( (uint32_t *)$msp_s + 3)
+      printf " r12  = 0x%x\n", *( (uint32_t *)$msp_s + 4)
+      printf " LR   = 0x%x\n", *( (uint32_t *)$msp_s + 5)
+      printf " PC   = 0x%x\n", *( (uint32_t *)$msp_s + 6)
+      printf " xPSR = 0x%x\n", *( (uint32_t *)$msp_s + 7)
+    else
+      printf " using msp_ns\n"
+      printf " r0   = 0x%x\n", *( (uint32_t *)$msp_ns + 0)
+      printf " r1   = 0x%x\n", *( (uint32_t *)$msp_ns + 1)
+      printf " r2   = 0x%x\n", *( (uint32_t *)$msp_ns + 2)
+      printf " r3   = 0x%x\n", *( (uint32_t *)$msp_ns + 3)
+      printf " r12  = 0x%x\n", *( (uint32_t *)$msp_ns + 4)
+      printf " LR   = 0x%x\n", *( (uint32_t *)$msp_ns + 5)
+      printf " PC   = 0x%x\n", *( (uint32_t *)$msp_ns + 6)
+      printf " xPSR = 0x%x\n", *( (uint32_t *)$msp_ns + 7)
+    end
   else
-    printf " using psp\n"
-    printf " r0   = 0x%x\n", *( (uint32_t *)$psp + 0)
-    printf " r1   = 0x%x\n", *( (uint32_t *)$psp + 1)
-    printf " r2   = 0x%x\n", *( (uint32_t *)$psp + 2)
-    printf " r3   = 0x%x\n", *( (uint32_t *)$psp + 3)
-    printf " r12  = 0x%x\n", *( (uint32_t *)$psp + 4)
-    printf " LR   = 0x%x\n", *( (uint32_t *)$psp + 5)
-    printf " PC   = 0x%x\n", *( (uint32_t *)$psp + 6)
-    printf " xPSR = 0x%x\n", *( (uint32_t *)$psp + 7)
+    if($is_secure_stack)
+      printf " using psp_s\n"
+      printf " r0   = 0x%x\n", *( (uint32_t *)$psp_s + 0)
+      printf " r1   = 0x%x\n", *( (uint32_t *)$psp_s + 1)
+      printf " r2   = 0x%x\n", *( (uint32_t *)$psp_s + 2)
+      printf " r3   = 0x%x\n", *( (uint32_t *)$psp_s + 3)
+      printf " r12  = 0x%x\n", *( (uint32_t *)$psp_s + 4)
+      printf " LR   = 0x%x\n", *( (uint32_t *)$psp_s + 5)
+      printf " PC   = 0x%x\n", *( (uint32_t *)$psp_s + 6)
+      printf " xPSR = 0x%x\n", *( (uint32_t *)$psp_s + 7)
+    else
+      printf " using psp_ns\n"
+      printf " r0   = 0x%x\n", *( (uint32_t *)$psp_ns + 0)
+      printf " r1   = 0x%x\n", *( (uint32_t *)$psp_ns + 1)
+      printf " r2   = 0x%x\n", *( (uint32_t *)$psp_ns + 2)
+      printf " r3   = 0x%x\n", *( (uint32_t *)$psp_ns + 3)
+      printf " r12  = 0x%x\n", *( (uint32_t *)$psp_ns + 4)
+      printf " LR   = 0x%x\n", *( (uint32_t *)$psp_ns + 5)
+      printf " PC   = 0x%x\n", *( (uint32_t *)$psp_ns + 6)
+      printf " xPSR = 0x%x\n", *( (uint32_t *)$psp_ns + 7)
+    end
   end
 else
  echo not in exception\n
