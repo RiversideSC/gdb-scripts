@@ -1,0 +1,11 @@
+# ID_PFR1, Processor Feature Register 1
+echo start display extension this CPU has\n
+printf "%d two-stack program model\n",           ( *0xE000ED44 & 0x00000200 ) != 0
+printf "%d security extension implemented\n",           ( *0xE000ED44 & 0x00000010 ) == 0x00000010
+printf "%d security extension implemented with VSCCLRM, CLRM, FPCXT instruction and disabling SG thread mode re-entrancy\n", ( *0xE000ED44 & 0x00000030 ) == 0x00000030
+echo end display extension this CPU has\n
+
+# PMU_TYPE, Performance Monitoring Unit Type Register
+echo start performance monitor extension this CPU has\n
+printf "%d of counters\n",           ( *0xE0003E00 & 0x0000000F )
+echo end performance monitor extension this CPU has\n

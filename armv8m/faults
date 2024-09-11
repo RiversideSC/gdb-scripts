@@ -55,4 +55,10 @@ echo \nauxiliary fault\n
 x 0xE000ED3C
 echo \nras fault\n
 x 0xE000EF04
+echo \nmemory fault addr\n
+x 0xE000ED34
+echo \nsecurity fault addr\n
+x 0xE000EDE8
+echo \nbus fault addr\n
+x 0xE000ED38
 echo \nend faults register print\n
